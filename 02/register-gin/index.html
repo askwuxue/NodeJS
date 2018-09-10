@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    用户名: <input type="text" id="user"><br>
+    密　码: <input type="text" id="pass"><br>
+    <input type="submit" value="注册" id="btn_reg">
+    <input type="submit" value="登录" id="btn_log">
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        window.onload = function () {
+            let user = document.getElementById('user');
+            let pass = document.getElementById('pass');
+            let btn_reg = document.getElementById('btn_reg');
+            let btn_log = document.getElementById('btn_log');
+
+            btn_reg.onclick = function () {
+                $.ajax({
+                url: 'http://localhost:3000/user/',
+                type: 'GET',
+                data: {act: 'reg', user: user.value, pass: pass.value},
+                success: function (res) {
+                    let ok = res.ok;
+                    console.log(res.msg);
+                    if (ok) {
+                        alert(res.msg);
+                    } else {
+                        alert(res.msg);
+                    }
+                },
+                error: function () {
+                    // console.log(user.value);
+                    alert('网络连接错误');
+                }
+            })
+            };
+        };
+    </script>
+</body>
+</html>
