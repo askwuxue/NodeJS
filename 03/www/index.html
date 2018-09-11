@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    用户: <input type="text" id="user"><br>
+    密码: <input type="text" id="pass"><br>
+    <input type="button" id="btn" value="登录">
+    
+    <script src="./ajax.js"></script>
+    <script>
+        window.onload = function () {
+            let user = document.getElementById('user');
+            let pass = document.getElementById('pass');
+            let btn = document.getElementById('btn');
+            btn.onclick = function () {
+                // console.log(user.value);
+                ajax({
+                    url: 'login',
+                    data: {"user": user.value,"pass": pass.value},
+                    success (res) {
+                        // console.log(res);
+                        res = JSON.parse(res);
+                        // console.log(res.ok);
+                        if (res.ok) {
+                            alert(res.msg);
+                        } else {
+                            alert(res.msg);
+                        }
+                    },
+                    error () {
+                        console.log('通信失败');
+                    }
+            })
+        };
+        };
+        
+    </script>
+</body>
+</html>
