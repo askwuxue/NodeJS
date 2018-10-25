@@ -10,6 +10,7 @@ const mysql = require('mysql');
 // 连接池，默认是十个连接
 let db = mysql.createPool({
     host: 'localhost',
+    // 默认是3306端口
     port: 3306,
     user: 'root',
     password: '1314995',
