@@ -9,7 +9,12 @@ let httpServer = http.createServer((request, response) => {
 
 let wsServer = io.listen(httpServer);
 
+// 用来存所有的用户的sock
+let socketList = [];
+let user_id = '';
 wsServer.on('connection', socket => {
+    // 每个用户的socket进入数组
+    socketList.push(socket);
     // 用户的唯一身份标识符
     let current_user_server = Math.random().toString();
     // console.log(current_user_server);
@@ -18,7 +23,7 @@ wsServer.on('connection', socket => {
         // console.log(userInfo);
         let username = userInfo[0];
         let password = userInfo[1];
-        console.log(username, password);
+        // console.log(username, password);
         // 用户在线状态
         let uset_log_status = 0;
         if (username == '' || password == '') {
@@ -31,7 +36,7 @@ wsServer.on('connection', socket => {
             return;
         }
         // 2. 查询数据库查看是否存在用户
-        let user_Info = db.query(`SELECT * FROM user_table WHERE username = '${username}'`, (error, data) => {
+        db.query(`SELECT * FROM user_table WHERE username = '${username}'`, (error, data) => {
             if (error) {
                 socket.emit('log_ret', {
                     "status": 0,
@@ -61,6 +66,9 @@ wsServer.on('connection', socket => {
                                 // console.log(data);
                             }
                         })
+                        // 保存user——id
+                        user_id = data[0].id;
+                        // console.log(user_id);
                         socket.emit('log_ret', {
                             "status": 1,
                             "msg": "登录成功",
@@ -147,12 +155,28 @@ wsServer.on('connection', socket => {
         })
 
         // 推送留言
-        socket.emit('receive_msg', {
-            "status": 1,
-            "msg": text,
-            "current_user": current_user_server
+        socketList.forEach(item => {
+            // console.log(item);
+                console.log('tuisong ');
+                item.emit('receive_msg', {
+                    "status": 1,
+                    "msg": text,
+                    "current_user": current_user_server
+                })
+        })  
+    })
+
+    // 用户离线
+    socket.on('disconnect', () => {
+        // 将用用户的在线状态变为离线状态
+        db.query(`UPDATE user_table SET online = 0 WHERE id = '${user_id}'`, (error, data) => {
+            if (error) {
+                console.log('用户离线--数据库错误');
+            } else {
+                // console.log(data);
+            }
         })
-        
+        socketList = socketList.filter(item => item != socket);
     })
 })
 
