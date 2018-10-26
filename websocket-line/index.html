@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <label for="user">用户名:</label>
+    <input type="input" id="user" name="username"><br />
+    <label for="pwd">密　码:</label>
+    <input type="password" id="pwd" name="password"><br />
+    <input type="button" id="login" value="登录">
+    <input type="button" id="reg" value="注册">
+    <hr>
+    <textarea  id="text" cols="30" rows="5"></textarea><br/>
+    <input type="button" id="submit" value="提交">
+    <ul>
+        <li>这是一条这是数据</li>
+    </ul>
+
+    <!-- 对于逻辑的处理 -->
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+        let userInput = document.getElementById('user');
+        let pwdInput = document.getElementById('pwd');
+        let loginBtn = document.getElementById('login');
+        let regBtn = document.getElementById('reg');
+        let textInput = document.getElementById('text');
+        let submitBtn = document.getElementById('submit');
+        let socket = io.connect('ws://localhost:3000');
+        
+        window.onload = function () {
+
+            // 登录回复 
+            socket.on('log_ret', (log_ret) => {
+                    console.log(log_ret);
+                        alert(log_ret.msg);
+                })
+            // 点击登录
+            loginBtn.onclick = function () {
+                let username = userInput.value;
+                let password = pwdInput.value;
+                // 登录
+                socket.emit('login',[username, password]);
+            }
+        }
+
+    </script>
+</body>
+</html>

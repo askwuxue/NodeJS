@@ -17,10 +17,11 @@ let db = mysql.createPool({
     database: 'websocket'
 })
 
-db.query('SELECT * from user_table', (err, data) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log(data);
-    }
-});
+// db.query('SELECT * from user_table', (err, data) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
+module.exports = db;
