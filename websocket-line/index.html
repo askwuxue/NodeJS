@@ -21,7 +21,7 @@
     <hr>
     <textarea  id="text" cols="30" rows="5"></textarea><br/>
     <input type="button" id="submit" value="提交">
-    <ul>
+    <ul id="ul">
         <li>这是一条这是数据</li>
     </ul>
 
@@ -34,15 +34,26 @@
         let regBtn = document.getElementById('reg');
         let textInput = document.getElementById('text');
         let submitBtn = document.getElementById('submit');
+        let ulObj = document.getElementById('ul');
+        let liList = document.querySelector('li');
         let socket = io.connect('ws://localhost:3000');
         
         window.onload = function () {
+            // 用户的唯一标识
+            let current_user_client = '';
+            // 点击注册   点击的时候再去拿输入框中的value
+            regBtn.onclick = function () {
+                let username = userInput.value;
+                let password = pwdInput.value;
+                // console.log(username, password);
+                socket.emit('reg', [username, password]);
+            }
+            // 注册回复
+            socket.on('reg_ret', (reg_ret) => {
+                console.log(reg_ret);
+            })
 
-            // 登录回复 
-            socket.on('log_ret', (log_ret) => {
-                    console.log(log_ret);
-                        alert(log_ret.msg);
-                })
+
             // 点击登录
             loginBtn.onclick = function () {
                 let username = userInput.value;
@@ -50,6 +61,43 @@
                 // 登录
                 socket.emit('login',[username, password]);
             }
+            // 登录回复 
+            socket.on('log_ret', (log_ret) => {
+                    // console.log(log_ret);
+                    current_user_client = log_ret.random;
+                    console.log(current_user_client);
+                        alert(log_ret.msg);
+                })
+            
+
+            // 发表留言
+            submitBtn.onclick = function () {
+                let text = textInput.value;
+                socket.emit('speak', [current_user_client, text]);
+            }
+
+            // 发表留言回复
+            socket.on('speak_ret', (speak_ret) => {
+                console.log(speak_ret);
+            })
+        
+            // 接受服务器消息推送
+            socket.on('receive_msg', (result) => {
+                console.log(result);
+                let current_user = result.current_user;
+                // console.log(current_user);
+                if (result.status === 1) {
+                    console.log(ulObj);
+                    let createLi = document.createElement('li');
+                    createLi.innerText = result.msg;
+                    // 当前用户
+                    if (current_user_client === current_user) {
+                        createLi.style.backgroundColor = 'green';
+                }
+                    ulObj.appendChild(createLi);
+                }
+                
+            })
         }
 
     </script>
