@@ -1,33 +1,28 @@
 const http = require('http');
-const url = require('url');
 const io = require('socket.io');
 const db = require('./mysql.js');
 
-let httpServer = http.createServer((request, response) => {
-
-})
-
+// 创建服务器
+let httpServer = http.createServer()
+// websocket 监听
 let wsServer = io.listen(httpServer);
 
-// 用来存所有的用户的sock
+// 存所有的用户的sock对象
 let socketList = [];
+// 存用户的id
 let user_id = '';
+// 监听连接
 wsServer.on('connection', socket => {
-    // 每个用户的socket进入数组
+    // 每个用户的socket
     socketList.push(socket);
     // 用户的唯一身份标识符
     let current_user_server = Math.random().toString();
-    // console.log(current_user_server);
     // 登录
     socket.on('login', (userInfo) => {
-        // console.log(userInfo);
         let username = userInfo[0];
         let password = userInfo[1];
-        // console.log(username, password);
-        // 用户在线状态
-        let uset_log_status = 0;
+        // 1. 后端验证
         if (username == '' || password == '') {
-            // 1. 验证信息
             socket.emit('log_ret', {
                 "status": 0,
                 "msg": "用户名或密码不能为空"
@@ -35,12 +30,12 @@ wsServer.on('connection', socket => {
             // 逻辑结束
             return;
         }
-        // 2. 查询数据库查看是否存在用户
+        // 2. 查询数据库 是否存在用户
         db.query(`SELECT * FROM user_table WHERE username = '${username}'`, (error, data) => {
             if (error) {
                 socket.emit('log_ret', {
                     "status": 0,
-                    "msg": "数据库错误了"
+                    "msg": "服务器繁忙,请稍后再试"
                 })
             } else {
                 // 用户不存在
@@ -51,24 +46,24 @@ wsServer.on('connection', socket => {
                     })
                     // 验证密码是否正确
                 } else {
-                    // console.log('wuxue=============' + data[0].username, data[0].password)
                     if (password !== data[0].password) {
                         socket.emit('log_ret', {
                             "status": 0,
                             "msg": "用户名或者密码不正确"
                         })
                     } else {
-                        // 更新用户的状态到数据库中
+                        // 更新用户为在在线状态
                         db.query(`UPDATE user_table SET online = 1 WHERE username = '${username}'`, (error, data) => {
                             if (error) {
-                                console.log(error);
+                                console.log('更新用户在线状态失败');
+                                consolelog(error)
                             } else {
-                                // console.log(data);
+                                console.log('用户在线状态更新成功.....');
                             }
                         })
-                        // 保存user——id
+                        // 保存user_id
                         user_id = data[0].id;
-                        // console.log(user_id);
+                        // 更新成功
                         socket.emit('log_ret', {
                             "status": 1,
                             "msg": "登录成功",
@@ -92,7 +87,7 @@ wsServer.on('connection', socket => {
             })
             return;
         }
-        // 2. 数据库验证
+        // 2. 数据库查询后验证
         db.query(`SELECT username FROM user_table WHERE username = '${username}'`, (error, data) => {
             if (error) {
                 socket.emit('reg_ret', {
@@ -100,13 +95,13 @@ wsServer.on('connection', socket => {
                     "msg": "服务器繁忙,请稍后再试..."
                 })
             } else {
-                // 判断是否存在用户
+                // 已存在用户
                 if (data.length) {
                     socket.emit('reg_ret', {
                         "status": 0,
                         "msg": "用户名已存在"
                     })
-                    // 写入数据库
+                    // 注册成功
                 } else {
                     db.query(`INSERT INTO user_table (username, password) VALUES ('${username}', '${password}')`, (error, data) => {
                         if (error) {
@@ -127,11 +122,10 @@ wsServer.on('connection', socket => {
 
     })
 
-    // 发表
+    // 发表留言
     socket.on('speak', (speak) => {
-        // console.log(speak[0]);
         let current_user_client = speak[0];
-        // 判断用户登陆状态
+        // 用户未登陆
         if (current_user_client !== current_user_server) {
             socket.emit('speak_ret', {
                 "status": 0,
@@ -139,7 +133,7 @@ wsServer.on('connection', socket => {
             })
             return;
         }
-        // 验证是否为空
+        // 留言空
         let text = speak[1];
         if (text === '') {
             socket.emit('speak_ret', {
@@ -154,10 +148,8 @@ wsServer.on('connection', socket => {
             "msg": "发表成功"
         })
 
-        // 推送留言
+        // 推送留言 
         socketList.forEach(item => {
-            // console.log(item);
-                console.log('tuisong ');
                 item.emit('receive_msg', {
                     "status": 1,
                     "msg": text,
@@ -168,7 +160,7 @@ wsServer.on('connection', socket => {
 
     // 用户离线
     socket.on('disconnect', () => {
-        // 将用用户的在线状态变为离线状态
+        // 更新用户状态为离线状态
         db.query(`UPDATE user_table SET online = 0 WHERE id = '${user_id}'`, (error, data) => {
             if (error) {
                 console.log('用户离线--数据库错误');
@@ -176,6 +168,7 @@ wsServer.on('connection', socket => {
                 // console.log(data);
             }
         })
+        // 过滤离线用户
         socketList = socketList.filter(item => item != socket);
     })
 })
