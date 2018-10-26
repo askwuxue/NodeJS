@@ -39,18 +39,18 @@
         let socket = io.connect('ws://localhost:3000');
         
         window.onload = function () {
-            // 用户的唯一标识
+            // 用户 唯一标识
             let current_user_client = '';
-            // 点击注册   点击的时候再去拿输入框中的value
+            // 点击注册   
+            // 点击的时候获取拿输入框中的value    我好像是弱智了
             regBtn.onclick = function () {
                 let username = userInput.value;
                 let password = pwdInput.value;
-                // console.log(username, password);
                 socket.emit('reg', [username, password]);
             }
             // 注册回复
             socket.on('reg_ret', (reg_ret) => {
-                console.log(reg_ret);
+                alert(reg_ret.msg);
             })
 
 
@@ -63,10 +63,14 @@
             }
             // 登录回复 
             socket.on('log_ret', (log_ret) => {
-                    // console.log(log_ret);
-                    current_user_client = log_ret.random;
-                    console.log(current_user_client);
+                    // 登陆成功
+                    if (log_ret.status) {
+                        // 服务端返回用户的唯一标示
+                        current_user_client = log_ret.random;
                         alert(log_ret.msg);
+                    } else {
+                        alert(log_ret.msg);
+                    }
                 })
             
 
@@ -78,28 +82,32 @@
 
             // 发表留言回复
             socket.on('speak_ret', (speak_ret) => {
-                console.log(speak_ret);
+                // 成功
+                if (speak_ret) {
+                    alert(speak_ret.msg);
+                }
+                alert(speak_ret.msg);
             })
         
             // 接受服务器消息推送
             socket.on('receive_msg', (result) => {
-                console.log(result);
+                // 当前用户的唯一标识
                 let current_user = result.current_user;
-                // console.log(current_user);
-                if (result.status === 1) {
-                    console.log(ulObj);
+                // 接受到数据
+                if (result.status) {
+                    // 创建 li 标签
                     let createLi = document.createElement('li');
+                    // 内容放在li 中
                     createLi.innerText = result.msg;
-                    // 当前用户
+                    // 留言是当前用户发布
                     if (current_user_client === current_user) {
                         createLi.style.backgroundColor = 'green';
-                }
+                    }
+                    // 将 li j加入到 ul 标签中
                     ulObj.appendChild(createLi);
-                }
-                
+                } 
             })
         }
-
     </script>
 </body>
 </html>
