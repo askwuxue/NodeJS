@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        /* 顶部 */
+        header {
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+        }
+        header h1 {
+            color: saddlebrown;
+        }
+        #main {
+            width: 100%;
+            height: 1000px;
+            /* width: 800px; */
+            /* height: 600px; */
+            /* border: 1px solid #000; */
+            /* margin: 0 auto; */
+            background: url('./images/1.jpg') no-repeat;
+        }
+        #show {
+            width: 800px;
+            height: 600px;
+            background-color: purple;
+            position: absolute;
+            margin-left: 50%;
+            transform: translateX(-70%);
+            margin-top: 20px;
+            border-radius: 10px;
+
+        }
+        #main .comment {
+            width: 300px;
+            height: 500px;
+            background-color: pink;
+            position: absolute;
+            right: 190px;
+            margin-top: 20px;
+            border-radius: 10px 10px 0 0;
+            overflow: auto;
+
+        }
+        .comment ul {
+            list-style: none;
+            /* overflow: scroll; */
+        }
+        .comment ul li {
+            /* height: 30px; */
+            border-bottom: 1px dashed #ccc;
+            padding: 5px;
+            line-height: 30px;
+        }
+        #comment-text {
+            width: 300px;
+            position: absolute;
+            right: 190px;
+            top: 600px;
+            
+        }
+        #comment-text textarea {
+            width: 100%;
+        }
+        #comment-text input {
+            width: 300px;
+            height: 30px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header><h1>多人在在线聊天Web应用</h1></header>
+    <div id="main">
+        <div id="show"></div>
+        <div class="comment">
+            <ul>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+                <li><span>askwuxue-说</span>第一条数据</li>
+            </ul>
+        </div>
+        <div id="comment-text">
+            <textarea id="text" cols="30" rows="10"></textarea><br />
+            <input type="button" id="submit" value="发表">
+        </div>
+    </div>
+</body>
+</html>
